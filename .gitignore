@@ -1,0 +1,3 @@
+/api-gateway/mysql
+/microservices/user-service/mysql
+/microservices/order-service

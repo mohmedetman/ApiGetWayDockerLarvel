@@ -1,0 +1,48 @@
+version: '3'
+
+networks:
+  laravel:
+    driver: bridge
+
+services:
+  nginx:
+    image: nginx
+    container_name: nginx_api_get_way
+    depends_on:
+      - api_get_way
+      - mysql
+    volumes:
+      - .:/var/www/html:ro
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "8010:80"
+    networks:
+      - laravel
+
+  mysql:
+    image: mysql
+    container_name: mysql_api_get_way
+    restart: unless-stopped
+    volumes:
+      - ./mysql:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: example
+      MYSQL_USER: example
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_PASSWORD: example
+    networks:
+      - laravel
+
+  api_get_way:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api_get_way
+    volumes:
+      - .:/var/www/html
+    expose:
+      - "9000"
+    networks:
+      - laravel
