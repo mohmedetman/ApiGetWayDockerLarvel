@@ -1,0 +1,57 @@
+version: '3'
+networks:
+  laravel:
+    driver: bridge
+
+
+services:
+  nginx:
+    image: nginx
+    container_name: nginx_order
+    depends_on:
+      - order
+      - mysql
+    volumes:
+      - .:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "8020:80"
+    networks:
+      - laravel
+
+  mysql:
+    image: mysql
+    container_name: mysql_order
+    restart: unless-stopped
+    volumes:
+      - ./mysql:/var/lib/mysql
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_DATABASE: example
+      MYSQL_USER: example
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_PASSWORD: example
+    networks:
+      - laravel
+
+  order:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: order
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "9001:9000"
+    networks:
+      - laravel
+  order2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: order2
+    volumes:
+      - .:/var/www/html
+    networks:
+      - laravel
